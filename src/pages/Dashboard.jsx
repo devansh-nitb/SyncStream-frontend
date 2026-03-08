@@ -9,7 +9,7 @@ import bgImage from '../assets/hero.jpg';
 const Dashboard = () => {
   const { user, logoutUser } = useContext(AuthContext);
   const [rooms, setRooms] = useState([]);
-  
+
   // Modal States
   const [modalType, setModalType] = useState(null); // 'create' | 'join' | 'delete' | 'error'
   const [inputValue, setInputValue] = useState(''); // Used for Room Name or Room Code
@@ -18,9 +18,9 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const ROOM_API = useMemo(() => axios.create({ 
-      baseURL: 'http://localhost:5000/api',
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
+  const ROOM_API = useMemo(() => axios.create({
+    baseURL: `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api`,
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   }), []);
 
   const fetchRooms = useCallback(async () => {
@@ -73,8 +73,8 @@ const Dashboard = () => {
     } catch (err) {
       // 3. If 404 or error, stay on dashboard and show specific error modal
       setModalType('error');
-      setErrorMessage(err.response?.status === 404 
-        ? "Room ID not found. Please check the code." 
+      setErrorMessage(err.response?.status === 404
+        ? "Room ID not found. Please check the code."
         : "Unable to join room. Please try again.");
     }
   };
@@ -105,11 +105,11 @@ const Dashboard = () => {
           body: (
             <>
               <p className="mb-4 text-sm text-gray-400">Give your room a catchy name.</p>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="e.g. Anime Night" 
+                placeholder="e.g. Anime Night"
                 className="w-full p-4 bg-[#333] rounded text-white border-none focus:ring-2 focus:ring-netflixRed outline-none font-bold"
                 autoFocus
               />
@@ -124,11 +124,11 @@ const Dashboard = () => {
           body: (
             <>
               <p className="mb-4 text-sm text-gray-400">Enter the Room Code shared by your host.</p>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="e.g. ABCD-1234" 
+                placeholder="e.g. ABCD-1234"
                 className="w-full p-4 bg-[#333] rounded text-white border-none focus:ring-2 focus:ring-netflixRed outline-none font-bold tracking-widest uppercase"
                 autoFocus
               />
@@ -153,11 +153,11 @@ const Dashboard = () => {
         return {
           title: "Error",
           action: "Okay", // Just closes the modal
-          handler: closeModal, 
+          handler: closeModal,
           body: (
             <div className="text-center">
-               <p className="text-white font-bold text-lg mb-2">Oops!</p>
-               <p className="text-red-400">{errorMessage}</p>
+              <p className="text-white font-bold text-lg mb-2">Oops!</p>
+              <p className="text-red-400">{errorMessage}</p>
             </div>
           )
         };
@@ -170,7 +170,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen relative font-body text-white overflow-x-hidden">
-      
+
       {/* Background Image Overlay */}
       <div className="fixed inset-0 z-0">
         <img src={bgImage} alt="Background" className="w-full h-full object-cover" />
@@ -193,33 +193,33 @@ const Dashboard = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-6 mb-12">
-          <button 
-              onClick={() => openModal('create')}
-              className="flex items-center gap-3 bg-netflixRed text-white px-6 py-4 rounded shadow-xl hover:bg-red-700 hover:scale-105 transition duration-300">
-              <FaPlus />
-              <span className="text-lg font-bold uppercase tracking-wider">Create Room</span>
+          <button
+            onClick={() => openModal('create')}
+            className="flex items-center gap-3 bg-netflixRed text-white px-6 py-4 rounded shadow-xl hover:bg-red-700 hover:scale-105 transition duration-300">
+            <FaPlus />
+            <span className="text-lg font-bold uppercase tracking-wider">Create Room</span>
           </button>
 
-          <button 
-              onClick={() => openModal('join')}
-              className="flex items-center gap-3 bg-[#333] text-white px-6 py-4 rounded shadow-xl hover:bg-[#444] hover:scale-105 transition duration-300">
-              <FaSignInAlt />
-              <span className="text-lg font-bold uppercase tracking-wider">Join via Code</span>
+          <button
+            onClick={() => openModal('join')}
+            className="flex items-center gap-3 bg-[#333] text-white px-6 py-4 rounded shadow-xl hover:bg-[#444] hover:scale-105 transition duration-300">
+            <FaSignInAlt />
+            <span className="text-lg font-bold uppercase tracking-wider">Join via Code</span>
           </button>
         </div>
 
         {/* Room Grid */}
         <h2 className="text-2xl font-heading mb-6 border-l-4 border-netflixRed pl-4">Live Now</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {rooms.map(room => (
-            <div key={room._id} 
-                 onClick={() => navigate(`/room/${room.roomId}`)}
-                 className="bg-[#181818] rounded-md overflow-hidden hover:scale-105 transition duration-300 cursor-pointer group shadow-lg border border-transparent hover:border-gray-700 relative">
-              
+            <div key={room._id}
+              onClick={() => navigate(`/room/${room.roomId}`)}
+              className="bg-[#181818] rounded-md overflow-hidden hover:scale-105 transition duration-300 cursor-pointer group shadow-lg border border-transparent hover:border-gray-700 relative">
+
               {/* Host Delete Button - Only visible if current user is host */}
               {user.id === room.host._id && (
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     openModal('delete', room.roomId);
@@ -231,12 +231,12 @@ const Dashboard = () => {
               )}
 
               <div className="h-40 bg-[#222] flex flex-col items-center justify-center">
-                  <FaTv className="text-4xl text-gray-600 group-hover:text-netflixRed transition duration-300" />
-                  <div className="mt-2 text-xs text-gray-500 bg-black/40 px-2 py-1 rounded">
-                    Code: <span className="text-white font-mono">{room.roomId}</span>
-                  </div>
+                <FaTv className="text-4xl text-gray-600 group-hover:text-netflixRed transition duration-300" />
+                <div className="mt-2 text-xs text-gray-500 bg-black/40 px-2 py-1 rounded">
+                  Code: <span className="text-white font-mono">{room.roomId}</span>
+                </div>
               </div>
-              
+
               <div className="p-4">
                 <h3 className="font-bold text-lg mb-1 truncate">{room.name}</h3>
                 <div className="flex justify-between items-center text-xs text-gray-500 uppercase tracking-wider">
@@ -246,7 +246,7 @@ const Dashboard = () => {
               </div>
             </div>
           ))}
-          
+
           {rooms.length === 0 && (
             <div className="col-span-full py-20 text-center text-gray-400 italic bg-black/20 rounded border border-white/10">
               No active parties. Create one to get started!

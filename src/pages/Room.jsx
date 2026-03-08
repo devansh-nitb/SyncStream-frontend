@@ -50,7 +50,7 @@ const Room = () => {
     if (!user) return;
 
     // 1. Fetch Room Data
-    axios.get(`http://localhost:5000/api/rooms/${roomId}`, {
+    axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/rooms/${roomId}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     })
       .then(res => {
